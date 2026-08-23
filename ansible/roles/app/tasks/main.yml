@@ -1,0 +1,22 @@
+---
+- name: Criar diretório da aplicação
+  ansible.builtin.file:
+    path: /opt/miguel-aluguel
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+
+- name: Copiar Docker Compose
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/miguel-aluguel/docker-compose.yml
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+
+- name: Subir aplicação com Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/miguel-aluguel
+    state: present
+  become_user: vagrant

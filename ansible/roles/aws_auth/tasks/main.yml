@@ -1,0 +1,21 @@
+---
+- name: Instalar AWS CLI
+  ansible.builtin.apt:
+    name: awscli
+    state: present
+    update_cache: true
+
+- name: Configurar credenciais AWS
+  ansible.builtin.command:
+    cmd: aws configure set {{ item.key }} {{ item.value }}
+  loop:
+    - { key: "aws_access_key_id", value: "{{ aws_access_key_id }}" }
+    - { key: "aws_secret_access_key", value: "{{ aws_secret_access_key }}" }
+    - { key: "region", value: "{{ aws_region }}" }
+  become_user: vagrant
+  no_log: true
+
+- name: Autenticar Docker no ECR
+  ansible.builtin.shell:
+    cmd: "aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}"
+  become_user: vagrant

@@ -1,0 +1,14 @@
+---
+- name: Configurar HAProxy
+  hosts: haproxy
+  become: true
+  roles:
+    - haproxy
+
+- name: Configurar servidor da aplicação
+  hosts: app
+  become: true
+  roles:
+    - docker
+    - aws_auth
+    - app

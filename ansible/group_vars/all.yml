@@ -1,0 +1,12 @@
+aws_region: "{{ lookup('ansible.builtin.env', 'AWS_REGION') }}"
+ecr_registry: "{{ lookup('ansible.builtin.env', 'ECR_REGISTRY') }}"
+
+aws_access_key_id: "{{ lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID') }}"
+aws_secret_access_key: "{{ lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY') }}"
+
+haproxy_host: "{{ lookup('ansible.builtin.env', 'HAPROXY_HOST') }}"
+
+db_username: "{{ lookup('ansible.builtin.env', 'DB_USERNAME') }}"
+db_password: "{{ lookup('ansible.builtin.env', 'DB_PASSWORD') }}"
+
+hash_token: "{{ lookup('ansible.builtin.env', 'HASH_TOKEN') }}"

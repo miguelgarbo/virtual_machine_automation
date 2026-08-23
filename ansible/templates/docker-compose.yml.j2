@@ -1,0 +1,49 @@
+services:
+
+  backend:
+    image: 675474620160.dkr.ecr.us-east-2.amazonaws.com/miguelaluguel-backend
+    container_name: miguel_aluguel_backend_official
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/miguel_aluguel
+      DB_USERNAME: "{{ db_username }}"
+      DB_PASSWORD: "{{ db_password }}"
+      HASH_TOKEN: "{{ hash_token }}"
+      FRONT_URL: "http://{{ haproxy_host }}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: miguel_aluguel_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: miguel_aluguel
+      POSTGRES_USER: "{{ db_username }}"
+      POSTGRES_PASSWORD: "{{ db_password }}"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U {{ db_username }} -d miguel_aluguel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  frontend:
+    image: 675474620160.dkr.ecr.us-east-2.amazonaws.com/miguelaluguel-frontend:latest
+    container_name: miguel_aluguel_frontend
+    ports:
+      - "80:80"
+    environment:
+      VITE_API_URL: "http://{{ haproxy_host }}:8080/api"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_test_data:
